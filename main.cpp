@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include "src/sa.h"
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -11,6 +12,10 @@ int main(int argc, char* argv[]){
         cerr << "Error opening file" << endl;
         exit(1);
     }
+
+    SimulationAnnealing sa;
+    sa.parse_input(input);
+    sa.output(output);
 
     return 0;   
 }

@@ -2,24 +2,28 @@ CXX = g++
 CXXFLAGS = -std=c++11 -g
 OPTFLAGS = -O3 -pthread
 TARGET = Floorplan
-OBJS = main.o
+SRCDIR = src
+OBJS = main.o sa.o
 
-all: $(TARGET) release
+all: release
 
 debug: CXXFLAGS += -Wall -DDEBUG_FLAG=1 -g
-debug: $(TARGET) time
+debug: $(TARGET)
 
 release: CXXFLAGS += -DDEBUG_FLAG=0 $(OPTFLAGS)
-release: $(TARGET) time
+release: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET)
 
-main.o: main.cpp
+main.o: main.cpp $(SRCDIR)/sa.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
-time:
-	time ./$(TARGET) input.in output_release.out
+sa.o: $(SRCDIR)/sa.cpp $(SRCDIR)/sa.h
+	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/sa.cpp
+
+run:
+	./$(TARGET) input.in output_release.out
 
 clean:
 	rm -f $(OBJS) $(TARGET) output_debug.out output_release.out
