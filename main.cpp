@@ -15,6 +15,9 @@ int main(int argc, char* argv[]){
 
     SimulationAnnealing sa;
     sa.parse_input(input);
+    sa.randomize_initial_bstree();
+    // sa.solve();
+    sa.packing_bstree();
     sa.output(output);
 
     return 0;   

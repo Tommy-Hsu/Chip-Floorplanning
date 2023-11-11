@@ -1,38 +1,51 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstdlib>
 #include <vector>
-
-struct Block
-{
-    int b_id;
-    int b_width;
-    int b_height;
-    int b_x = 0;
-    int b_y = 0;
-
-    Block(int id, int width, int height) : b_id(id), b_width(width), b_height(height) {}
-};
-
+#include <list>
+#include <algorithm>
+#include <unordered_map>
+#include "module.h"
+#include "debug.h"
 
 class SimulationAnnealing
 {
 private:
-    double Rlowerbound;
-    double Rupperbound;
-    std::vector<Block*> blocks;
-    int width = 0;
-    int height = 0;
+    double Rlowerbound_;
+    double Rupperbound_;
+    std::unordered_map<int, Block*> blocks;
+    BSTree* bstree = nullptr;
+    int nBlocks_ = 0;
+    int W_ = 0;   // width
+    int H_ = 0;   // height
+
+    std::list<ContourNode> contour_line_;
 
 public:
-    SimulationAnnealing();
-    ~SimulationAnnealing();
+    SimulationAnnealing() {};
+    ~SimulationAnnealing()
+    {
+        for (auto& b : blocks) {
+            delete b.second;
+        }
+        delete bstree;
+    }
 
-    // workflow
+    /* workflow */
     void parse_input(std::ifstream& input);
+    void randomize_initial_bstree();
+    void packing_bstree();
+    void dfs_preorder(int node_id);
+    void solve();
     void output(std::ofstream& output);
 
-    // display
+    /* display */
     void display_blocks();
+    void display_bstree();
+
+    /* function */
+    std::vector<int> generate_random_ids(const int nBlocks);
 };
