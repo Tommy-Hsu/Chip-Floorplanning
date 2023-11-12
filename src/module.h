@@ -70,6 +70,7 @@ public:
 class ContourNode 
 {
 public:
+    // x1: x coordinate of left side, x2: x coordinate of right side, y2: y coordinate from bottom side
     int x1, x2, y2;
     ContourNode(int x1, int x2, int y2) : x1(x1), x2(x2), y2(y2) {};
     ~ContourNode() {};

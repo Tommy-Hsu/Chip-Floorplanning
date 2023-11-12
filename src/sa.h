@@ -39,6 +39,7 @@ public:
     void randomize_initial_bstree();
     void packing_bstree();
     void dfs_preorder(int node_id);
+    int  update_contour_line(int node_id);
     void solve();
     void output(std::ofstream& output);
 

@@ -38,7 +38,58 @@ void SimulationAnnealing::randomize_initial_bstree(){
     }
 
     DEBUG_COUT(" -------- Randomize Done --------\n");
-    display_bstree();
+    // display_bstree();
+}
+
+int SimulationAnnealing::update_contour_line(int node_id){
+
+    // x1: left, y1: bottom, x2: right , y2: top
+    int nd_x1 = blocks[node_id]->get_x();
+    int nd_x2 = nd_x1 + blocks[node_id]->get_width();
+    int nd_y1{0}, nd_y2{0}; 
+    
+    auto it = contour_line_.begin();
+    auto& cn = *it;
+    while (it != contour_line_.end()){
+        if(cn.x2 <= nd_x1){
+            it++;
+        }
+        else if(nd_x2 <= cn.x1 ){
+            break;
+        }
+        else{
+            nd_y1 = std::max(cn.y2, nd_y1);
+            /* Case 1: nd_x1 < cn.x1 and cn.x2 < nd_x2 */
+            if(nd_x1 < cn.x1 && cn.x2 < nd_x2){
+                contour_line_.erase(it);
+            }
+            /* Case 2: cn.x1 < nd_x1 and cn.x2 < nd_x2 */
+            else if (cn.x1 < nd_x1 and cn.x2 < nd_x2)
+            {
+                cn.x2 = nd_x1;
+            }
+            /* Case 3: nd_x1 < cn.x1 and nd_x2 < cn.x2 */
+            else if (nd_x1 < cn.x1 and nd_x2 < cn.x2)
+            {
+                cn.x1 = nd_x2;
+            }
+            /* Case 4: cn.x1 < nd_x1 and nd_x2 < cn.x2 */
+            else if (cn.x1 < nd_x1 and nd_x2 < cn.x2)
+            {
+                ContourNode new_cn(cn.x1, nd_x1, cn.y2);
+                cn.x1 = nd_x2;
+                contour_line_.insert(it, new_cn);
+            }
+            it++;
+        }
+    }
+
+    nd_y2 = nd_y1 + blocks[node_id]->get_height();
+    ContourNode new_cn(nd_x1, nd_x2, nd_y2);
+    contour_line_.insert(it, new_cn);
+    H_ = std::max(H_, nd_y2);
+
+    return nd_y1;
 }
 
 void SimulationAnnealing::dfs_preorder(int node_id){
@@ -57,18 +108,24 @@ void SimulationAnnealing::dfs_preorder(int node_id){
             H_ = curr_block_ptr->get_height();
         }
         else if(node_id == bstree->nodes[parent_id]->left_){
+
+            // x coordinate
             curr_block_ptr->set_x(parent_block_ptr->get_x() + parent_block_ptr->get_width());
             if( curr_block_ptr->get_x() + curr_block_ptr->get_width() > W_ ){
                 W_ = curr_block_ptr->get_x() + curr_block_ptr->get_width();
             }
-            // TODO: find the y coordinate
+            // y coordinate
+            curr_block_ptr->set_y(update_contour_line(node_id));
         }
         else if(node_id == bstree->nodes[parent_id]->right_){
+            
+            // x coordinate
             curr_block_ptr->set_x(parent_block_ptr->get_x());
             if( curr_block_ptr->get_x() + curr_block_ptr->get_width() > W_ ){
                 W_ = curr_block_ptr->get_x() + curr_block_ptr->get_width();
             }
-            // TODO: find the y coordinate
+            // y coordinate
+            curr_block_ptr->set_y(update_contour_line(node_id));
         }
 
         dfs_preorder(bstree->nodes[node_id]->left_);
@@ -78,9 +135,8 @@ void SimulationAnnealing::dfs_preorder(int node_id){
 }
 
 void SimulationAnnealing::packing_bstree(){
-    
     W_ = 0;
-    H_ = 100;
+    H_ = 0;
     const int root = bstree->root_;
     dfs_preorder(root);
 }
