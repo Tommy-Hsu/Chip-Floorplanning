@@ -11,12 +11,13 @@ width = 0
 height = 0
 
 class Block:
-    def __init__(self, b_id, b_x, b_y, b_width, b_height):
+    def __init__(self, b_id, b_x, b_y, b_width, b_height, b_rotate=False):
         self.b_id = b_id
         self.b_x = b_x
         self.b_y = b_y
         self.b_width = b_width
         self.b_height = b_height
+        self.b_rotate = b_rotate
 
 def parse_blocksize(f):
     for line in f:
@@ -31,15 +32,18 @@ def parse_blocksize(f):
 def parse_blockcoordinate(f):
     for line in f:
         if line[0] == 'b':
-            # b1 40 50
+            # b1 40 50 1or0
             block = line.split()
             b_id = block[0]
             b_x = block[1]
             b_y = block[2]
+            b_rotate = block[3]
             for b in blocks:
                 if b.b_id == b_id:
                     b.b_x = b_x
                     b.b_y = b_y
+                    if b_rotate == '1':
+                        b.b_width, b.b_height = b.b_height, b.b_width
         elif line[0] == 'A':
             global area 
             area = int(line.split()[2])
@@ -90,7 +94,7 @@ if __name__ == '__main__':
         
     plot()
 
-    print("Done!")
+    print("Layout Done!")
     sys.exit(0)
 
     
