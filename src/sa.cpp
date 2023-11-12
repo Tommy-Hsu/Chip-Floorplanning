@@ -50,37 +50,35 @@ int SimulationAnnealing::update_contour_line(int node_id){
     
     auto it = contour_line_.begin();
     auto& cn = *it;
+    /* could we iterator from parent node x coordinate !? */
     while (it != contour_line_.end()){
         if(cn.x2 <= nd_x1){
             it++;
         }
-        else if(nd_x2 <= cn.x1 ){
+        else if(nd_x2 <= cn.x1){
             break;
         }
         else{
             nd_y1 = std::max(cn.y2, nd_y1);
-            /* Case 1: nd_x1 < cn.x1 and cn.x2 < nd_x2 */
-            if(nd_x1 < cn.x1 && cn.x2 < nd_x2){
-                contour_line_.erase(it);
+            if(nd_x1 <= cn.x1 && cn.x2 <= nd_x2){
+                /* Case 1: nd_x1 <= cn.x1 and cn.x2 <= nd_x2 */
+                // erase will return next iterator
+                it = contour_line_.erase(it);
             }
-            /* Case 2: cn.x1 < nd_x1 and cn.x2 < nd_x2 */
-            else if (cn.x1 < nd_x1 and cn.x2 < nd_x2)
-            {
+            else if (cn.x1 <= nd_x1 && cn.x2 <= nd_x2){
+                /* Case 2: cn.x1 <= nd_x1 and cn.x2 <= nd_x2 */
                 cn.x2 = nd_x1;
             }
-            /* Case 3: nd_x1 < cn.x1 and nd_x2 < cn.x2 */
-            else if (nd_x1 < cn.x1 and nd_x2 < cn.x2)
-            {
+            else if (nd_x1 <= cn.x1 && nd_x2 <= cn.x2){
+                /* Case 3: nd_x1 <= cn.x1 and nd_x2 <= cn.x2 */
                 cn.x1 = nd_x2;
             }
-            /* Case 4: cn.x1 < nd_x1 and nd_x2 < cn.x2 */
-            else if (cn.x1 < nd_x1 and nd_x2 < cn.x2)
-            {
+            else if (cn.x1 <= nd_x1 && nd_x2 <= cn.x2){
+                /* Case 4: cn.x1 <= nd_x1 and nd_x2 <= cn.x2 */
                 ContourNode new_cn(cn.x1, nd_x1, cn.y2);
                 cn.x1 = nd_x2;
                 contour_line_.insert(it, new_cn);
             }
-            it++;
         }
     }
 
