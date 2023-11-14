@@ -3,6 +3,8 @@
 void BSTree::randomize_initial_bstree(){
     const int nNodes = nBlocks_;
     std::vector<int> ids = generate_random_ids();
+
+    /* fully binary tree */
     root_ = ids[0];
     nodes[root_]->left_ = ids[1];
     nodes[root_]->right_ = ids[2];
@@ -32,7 +34,20 @@ std::vector<int> BSTree::generate_random_ids(){
 void BSTree::packing_bstree(){
     W_ = 0;
     H_ = 0;
-    const int root = root_;
+
+    /* self-defined binary tree */
+    // root_ = 2;
+    // nodes[1]->left_ = -1; nodes[1]->right_ = -1; nodes[1]->parent_ = 2;
+    // nodes[2]->left_ = 3; nodes[2]->right_ = 1; nodes[2]->parent_ = -1; blocks_[2]->rotate();
+    // nodes[3]->left_ = -1; nodes[3]->right_ = 4; nodes[3]->parent_ = 2; blocks_[3]->rotate();
+    // nodes[4]->left_ = -1; nodes[4]->right_ = -1; nodes[4]->parent_ = 3;
+
+    // #ifdef DEBUG_FLAG
+    //     display_bstree();
+    // #endif
+
+    int root = root_;
+    contour_line_.clear();
     dfs_preorder(root);
 }
 
@@ -85,9 +100,9 @@ int BSTree::update_contour_line(int node_id){
     int nd_y1{0}, nd_y2{0}; 
     
     auto it = contour_line_.begin();
-    auto& cn = *it;
     /* could we iterator from parent node x coordinate !? */
     while (it != contour_line_.end()){
+        auto& cn = *it;
         if(cn.x2 <= nd_x1){
             it++;
         }
@@ -185,7 +200,7 @@ void BSTree::delete_node(int nn){
             
             swap_nodes(nn, (mv_left) ? nodes[nn]->left_ : nodes[nn]->right_);
 
-        }while( left_id != -1 || right_id != -1);
+        }while( nodes[nn]->left_ != -1 || nodes[nn]->right_ != -1);
 
         parent_id = nodes[nn]->parent_;
         if( nodes[parent_id]->left_ == nn ){
@@ -242,7 +257,6 @@ void BSTree::insert_node(int nn, int nnp){
 }
 
 void BSTree::perturb(){
-    srand(time(NULL));
     int m, n, t;
     m = rand()%3 + 1;
     n = rand()%nBlocks_ + 1;

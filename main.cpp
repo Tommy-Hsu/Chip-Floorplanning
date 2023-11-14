@@ -5,6 +5,7 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
+    srand(time(NULL));
     ifstream    input(argv[1]);
     ofstream    output(argv[2]);
 

@@ -27,7 +27,8 @@ void SimulationAnnealing::solve(){
     tmp_bstree = new BSTree(nBlocks_, blocks);
     tmp_bstree->randomize_initial_bstree();
     
-    tmp_bstree->perturb();
+    for(int i = 0; i < 10; i++)
+        tmp_bstree->perturb();
     
     best_bstree = tmp_bstree;
     // tmp_bstree already packing, TODO: calculate cost
