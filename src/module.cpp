@@ -132,15 +132,12 @@ void BSTree::swap_nodes(int nn1, int nn2){
     auto n2 = *(nodes[nn2]);
 
     if(n1.left_!= -1){  
-        //add_changed_nodes(n1.left);
         nodes[n1.left_]->parent_  = nn2;
     }
     if(n1.right_!= -1){
-        //add_changed_nodes(n1.right);
         nodes[n1.right_]->parent_ = nn2;  
     }
     if(n1.parent_ != -1){
-        //add_changed_nodes(n1.parent);
         if(nodes[n1.parent_]->left_==nn1)
             nodes[n1.parent_]->left_ = nn2;
         else
@@ -150,15 +147,12 @@ void BSTree::swap_nodes(int nn1, int nn2){
     }
 
     if(n2.left_!=-1){
-        //add_changed_nodes(n2.left);
         nodes[n2.left_]->parent_  = nn1;
     }
     if(n2.right_!=-1){
-        //add_changed_nodes(n2.right);
         nodes[n2.right_]->parent_ = nn1;  
     }
     if(n2.parent_ != -1){
-        //add_changed_nodes(n2.parent);
         if(nodes[n2.parent_]->left_==nn2)
             nodes[n2.parent_]->left_  = nn1;
         else
@@ -173,16 +167,83 @@ void BSTree::swap_nodes(int nn1, int nn2){
 }
 
 void BSTree::delete_node(int nn){
-    // TODO: check if nn is leaf node
+    int parent_id = nodes[nn]->parent_;
+    int left_id   = nodes[nn]->left_;
+    int right_id  = nodes[nn]->right_;
+
+    if( left_id != -1 && right_id != -1 ){
+        /* two children */
+        bool mv_left;
+        do{
+            if( nodes[nn]->left_ != -1 && nodes[nn]->right_ != -1 ){
+                mv_left = rand()%2;
+            }else if( nodes[nn]->left_ != -1 ){
+                mv_left = true;
+            }else{
+                mv_left = false;
+            }
+            
+            swap_nodes(nn, (mv_left) ? nodes[nn]->left_ : nodes[nn]->right_);
+
+        }while( left_id != -1 || right_id != -1);
+
+        parent_id = nodes[nn]->parent_;
+        if( nodes[parent_id]->left_ == nn ){
+            nodes[parent_id]->left_ = -1;
+        }else{
+            nodes[parent_id]->right_ = -1;
+        }
+    }else if( left_id != -1 || right_id != -1){
+        /* one child */
+        int child_id = (left_id != -1) ? left_id : right_id;
+        if(parent_id != -1){
+            if(nodes[parent_id]->left_ == nn){
+                nodes[parent_id]->left_ = child_id;
+            }else{
+                nodes[parent_id]->right_ = child_id;
+            }
+        }else{
+            root_ = child_id;
+        }
+        nodes[child_id]->parent_ = parent_id;
+
+    }else{
+        /* no child */
+        if(nodes[parent_id]->left_ == nn){
+            nodes[parent_id]->left_ = -1;
+        }else{
+            nodes[parent_id]->right_ = -1;
+        }
+    }
+
+    nodes[nn]->parent_ = -1;
+    nodes[nn]->left_   = -1;
+    nodes[nn]->right_  = -1;
 }
 
 void BSTree::insert_node(int nn, int nnp){
-    // TODO: check if np is leaf node
+
+    bool pick_right = rand()%2;
+    if(pick_right){
+        nodes[nn]->right_ = nodes[nnp]->right_;
+        nodes[nn]->left_ = -1;
+        if(nodes[nnp]->right_ != -1)
+            nodes[nodes[nnp]->right_]->parent_ = nn;
+        nodes[nnp]->right_ = nn;
+    }else{
+        nodes[nn]->left_ = nodes[nnp]->left_;
+        nodes[nn]->right_ = -1;
+        if(nodes[nnp]->left_ != -1)
+            nodes[nodes[nnp]->left_]->parent_ = nn;
+        nodes[nnp]->left_ = nn;
+    }
+
+    nodes[nn]->parent_ = nnp;
 }
 
 void BSTree::perturb(){
     srand(time(NULL));
-    int m, n , p;
+    int m, n, t;
     m = rand()%3 + 1;
     n = rand()%nBlocks_ + 1;
 
@@ -193,21 +254,21 @@ void BSTree::perturb(){
     else if( m == 2 ){
        /* delete & insert */
         do{
-            p = rand()%nBlocks_ + 1;
-        }while(p == n);
-        // delete_node(n);
-        // insert_node(n, p);
+            t = rand()%nBlocks_ + 1;
+        }while(t == n);
+        delete_node(n);
+        insert_node(n, t);
     }
     else if( m == 3 ){
         /* swap 2 nodes */
         do{
-            p = rand()%nBlocks_ + 1;
-        }while(p == n|| p == nodes[n]->parent_ || n == nodes[p]->parent_);
-        swap_nodes(n, p);
+            t = rand()%nBlocks_ + 1;
+        }while(t == n|| t == nodes[n]->parent_ || n == nodes[t]->parent_);
+        swap_nodes(n, t);
     }
 
     std::cout << " -------- BSTree Perturb Done --------\n";
-    std::cout << "m: " << m << ", n: " << n << ", p: " << p << std::endl;
+    std::cout << "m: " << m << ", n: " << n << ", p: " << t << std::endl;
     #ifdef DEBUG_FLAG
         display_bstree();
     #endif
