@@ -32,17 +32,14 @@ def parse_blocksize(f):
 def parse_blockcoordinate(f):
     for line in f:
         if line[0] == 'b':
-            # b1 40 50 1or0
+            # b1 40 50 (R)
             block = line.split()
-            b_id = block[0]
-            b_x = block[1]
-            b_y = block[2]
-            b_rotate = block[3]
+            b_id, b_x, b_y, *b_rotate = block
             for b in blocks:
                 if b.b_id == b_id:
                     b.b_x = b_x
                     b.b_y = b_y
-                    if b_rotate == '1':
+                    if 'R' in b_rotate:
                         b.b_width, b.b_height = b.b_height, b.b_width
         elif line[0] == 'A':
             global area 

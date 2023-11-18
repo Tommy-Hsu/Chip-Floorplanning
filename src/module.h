@@ -67,7 +67,7 @@ public:
     int root_ = -1;
     std::unordered_map<int, Block*> blocks_; // same id as Nodes
     std::unordered_map<int, Node*> nodes; // same id as Blocks
-    double cost = 0;
+    double cost_ = 0;
     int nBlocks_ = 0;
     int W_ = 0;
     int H_ = 0;
@@ -87,6 +87,43 @@ public:
         }
     };
 
+    /* copy assigment */
+    BSTree& operator=(const BSTree &other){
+        if(this != &other){
+            
+            for (auto& block : blocks_) {
+                delete block.second;
+            }
+            for (auto& node : nodes) {
+                delete node.second;
+            }
+            blocks_.clear();
+            nodes.clear();
+            
+            for(int i = 1; i <= other.nBlocks_; i++){
+                Block* block = new Block(other.blocks_.at(i)->get_id(), other.blocks_.at(i)->get_width(), other.blocks_.at(i)->get_height());
+                blocks_[i] = block;
+                if(other.blocks_.at(i)->get_is_rotate()){
+                    blocks_[i]->rotate();
+                }
+            }
+            for (int i = 1; i <= other.nBlocks_; i++) {
+                Node* node = new Node();
+                nodes[i] = node;
+                nodes[i]->left_ = other.nodes.at(i)->left_;
+                nodes[i]->right_ = other.nodes.at(i)->right_;
+                nodes[i]->parent_ = other.nodes.at(i)->parent_;
+            }
+            root_ = other.root_;
+            cost_ = other.cost_;
+            nBlocks_ = other.nBlocks_;
+            W_ = other.W_;
+            H_ = other.H_;
+            contour_line_ = other.contour_line_;
+        }
+        return *this;
+    };
+
     /* destructor */
     ~BSTree() {
         for (auto& block : blocks_) {
@@ -102,11 +139,12 @@ public:
     std::vector<int> generate_random_ids();
     void packing_bstree();
     void dfs_preorder(int node_id);
-    int  update_contour_line(int node_id);
+    int update_contour_line(int node_id);
     void swap_nodes(int nn1, int nn2); // nn: node number
     void delete_node(int nn);
     void insert_node(int nn, int nnp); // np: number of node parent
     void perturb();
+    void calculate_cost();
 
     /* display */
     void display_bstree();

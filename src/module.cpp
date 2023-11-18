@@ -55,7 +55,6 @@ void BSTree::dfs_preorder(int node_id){
     if(node_id > 0){
         const auto& curr_block_ptr = blocks_[node_id];
         int parent_id = nodes[node_id]->parent_;
-        const auto& parent_block_ptr = blocks_[parent_id];
 
         if(parent_id == -1){
             curr_block_ptr->set_x(0);
@@ -66,7 +65,8 @@ void BSTree::dfs_preorder(int node_id){
             H_ = curr_block_ptr->get_height();
         }
         else if(node_id == nodes[parent_id]->left_){
-
+            
+            const auto& parent_block_ptr = blocks_[parent_id];
             // x coordinate
             curr_block_ptr->set_x(parent_block_ptr->get_x() + parent_block_ptr->get_width());
             if( curr_block_ptr->get_x() + curr_block_ptr->get_width() > W_ ){
@@ -77,6 +77,7 @@ void BSTree::dfs_preorder(int node_id){
         }
         else if(node_id == nodes[parent_id]->right_){
             
+            const auto& parent_block_ptr = blocks_[parent_id];
             // x coordinate
             curr_block_ptr->set_x(parent_block_ptr->get_x());
             if( curr_block_ptr->get_x() + curr_block_ptr->get_width() > W_ ){
