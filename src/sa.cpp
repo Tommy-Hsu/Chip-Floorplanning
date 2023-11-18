@@ -24,19 +24,52 @@ void SimulationAnnealing::parse_input(std::ifstream& input){
 
 void SimulationAnnealing::solve(){
 
-
-    tmp_bstree = new BSTree(nBlocks_, blocks);
+    prev_bstree = new BSTree(nBlocks_, blocks);
     best_bstree = new BSTree(nBlocks_, blocks);
     curr_bstree = new BSTree(nBlocks_, blocks);
 
-    tmp_bstree->randomize_initial_bstree();
-    
-    normalized_cost_(tmp_bstree, 10);
-    
+    prev_bstree->randomize_initial_bstree();
+    normalized_cost_(prev_bstree, 1000);
 
-    *best_bstree = *tmp_bstree;   
-    best_cost_ = calculate_cost(best_bstree);
-    best_bstree->packing_bstree();
+    const double r = 0.95; // Cooling rate
+    const int k = 40;      // Number of iterations at each temperature
+    const double T0 = 1000;//1.0e+05; //std::fabs(/ log(P));
+
+    double T = T0;
+    double delta_cost;
+    double p = 0.95; // Uphill probability
+    int reject;
+
+    calculate_cost(prev_bstree);
+    *best_bstree = *prev_bstree;   // copy assignment
+    *curr_bstree = *prev_bstree;  // copy assignment
+    
+    do{
+        reject = 0;
+        for(size_t i = 0; i < k; i++){
+            // std::cout << i;
+            curr_bstree->perturb();
+            delta_cost = calculate_cost(curr_bstree) - prev_bstree->cost_;
+            // std::cout << "delta_cost: " << delta_cost << std::endl;
+            // std::cout << "std::exp(-delta_cost/T): " << std::exp(-delta_cost/T) << std::endl;
+            p = std::min(1.0, std::exp(-delta_cost/T));
+            double r = (double)rand()/RAND_MAX;
+            // std::cout << "r: " << r << std::endl;
+            if(delta_cost <= 0 || p > r){
+                *prev_bstree = *curr_bstree;  // copy assignment
+                if(curr_bstree->cost_ < best_bstree->cost_){
+                    *best_bstree = *curr_bstree;  // copy assignment
+                }
+            }else{
+                reject++;
+                *curr_bstree = *prev_bstree;  // copy assignment
+            }
+        }
+        T *= r;
+        std::cout << "\nT: " << T << " reject: " << reject << std::endl;
+    }while(reject/k < 0.95 && T > 0.1 );
+
+    // output the result by best_bstree
 }
 
 void SimulationAnnealing::output(std::ofstream& output){
@@ -92,7 +125,9 @@ void SimulationAnnealing::normalized_cost_(BSTree* bstree, int t){
 }
 
 double SimulationAnnealing::calculate_cost(BSTree* bstree){
-    
+    /* already packing */
+    bstree->packing_bstree();
+
     double cost = 0.0;
     int area = bstree->W_ * bstree->H_;
     double ratio = (double)bstree->W_ / (double)bstree->H_;
@@ -104,11 +139,12 @@ double SimulationAnnealing::calculate_cost(BSTree* bstree){
         // + width_penalty + height_penalty
         ;
 
-    std::cout<<"area/area_norm_: " << (double)area/area_norm_ 
-        <<"\n (Ru-r)(Rl-r): "<< (Rupperbound_ - ratio) * (Rlowerbound_ - ratio) << std::endl;
+    // std::cout<<"area/area_norm_: " << (double)area/area_norm_ 
+    //     <<"\n (r-Ru)(r-Rl): "<< (ratio/ratio_norm_ - Rupperbound_) * (ratio/ratio_norm_ - Rlowerbound_) << std::endl;
         // <<"\n width_penalty: "<<width_penalty
         // <<"\n height_penalty: "<<height_penalty<<std::endl;
-
+    
+    bstree->cost_ = cost;
     return cost;
 }
 
@@ -116,6 +152,8 @@ double SimulationAnnealing::calculate_cost(BSTree* bstree){
 void SimulationAnnealing::display_blocks(){
 
     printf("Rlowerbound: %f, Rupperbound: %f\n", Rlowerbound_, Rupperbound_);
+    std::cout << "Area: " << W_ * H_ << std::endl;
+    std::cout << "Ratio: " << (double)W_ / (double)H_ << std::endl;
     for(int i = 1; i <= nBlocks_; i++){
         printf("B%d (%d, %d) %d\n", i, blocks[i]->get_x(), blocks[i]->get_y(), blocks[i]->get_is_rotate());
     }

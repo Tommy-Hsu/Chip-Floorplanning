@@ -36,11 +36,17 @@ void BSTree::packing_bstree(){
     H_ = 0;
 
     /* self-defined binary tree */
-    // root_ = 2;
-    // nodes[1]->left_ = -1; nodes[1]->right_ = -1; nodes[1]->parent_ = 2;
-    // nodes[2]->left_ = 3; nodes[2]->right_ = 1; nodes[2]->parent_ = -1; blocks_[2]->rotate();
-    // nodes[3]->left_ = -1; nodes[3]->right_ = 4; nodes[3]->parent_ = 2; blocks_[3]->rotate();
-    // nodes[4]->left_ = -1; nodes[4]->right_ = -1; nodes[4]->parent_ = 3;
+    // root_ = 1;
+    // nodes[1]->left_ = 4; nodes[1]->right_ = 2; nodes[1]->parent_ = -1;
+    // nodes[2]->left_ = -1; nodes[2]->right_ = 3; nodes[2]->parent_ = 1; blocks_[2]->rotate();
+    // nodes[3]->left_ = -1; nodes[3]->right_ = -1; nodes[3]->parent_ = 2; blocks_[3]->rotate();
+    // nodes[4]->left_ = -1; nodes[4]->right_ = -1; nodes[4]->parent_ = 1;
+
+    // root_ = 4;
+    // nodes[1]->left_ = -1; nodes[1]->right_ = -1; nodes[1]->parent_ = 4; blocks_[1]->rotate();
+    // nodes[2]->left_ = -1; nodes[2]->right_ = -1; nodes[2]->parent_ = 3; 
+    // nodes[3]->left_ = 2; nodes[3]->right_ = -1; nodes[3]->parent_ = 4; 
+    // nodes[4]->left_ = 3; nodes[4]->right_ = 1; nodes[4]->parent_ = -1; blocks_[4]->rotate();
 
     // #ifdef DEBUG_FLAG
     //     display_bstree();
@@ -262,6 +268,8 @@ void BSTree::perturb(){
     m = rand()%3 + 1;
     n = rand()%nBlocks_ + 1;
 
+    // std::cout << "m: " << m << " n: " << n << std::endl;
+
     if( m == 1 ){
         /* rotate */
         blocks_[n]->rotate();
@@ -278,15 +286,15 @@ void BSTree::perturb(){
         /* swap 2 nodes */
         do{
             t = rand()%nBlocks_ + 1;
-        }while(t == n|| t == nodes[n]->parent_ || n == nodes[t]->parent_);
+            // std::cout << "t: " << t << std::endl;
+        }while(t == n);
         swap_nodes(n, t);
     }
 
-    std::cout << " -------- BSTree Perturb Done --------\n";
-    std::cout << "m: " << m << ", n: " << n << ", p: " << t << std::endl;
-    #ifdef DEBUG_FLAG
-        display_bstree();
-    #endif
+    // std::cout << " -------- BSTree Perturb Done --------\n";
+    // #ifdef DEBUG_FLAG
+    //     display_bstree();
+    // #endif
 }
 
 /* display */

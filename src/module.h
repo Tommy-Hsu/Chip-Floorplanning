@@ -101,11 +101,15 @@ public:
             nodes.clear();
             
             for(int i = 1; i <= other.nBlocks_; i++){
-                Block* block = new Block(other.blocks_.at(i)->get_id(), other.blocks_.at(i)->get_width(), other.blocks_.at(i)->get_height());
+                int w = (other.blocks_.at(i)->get_is_rotate()) ? other.blocks_.at(i)->get_height() : other.blocks_.at(i)->get_width();
+                int h = (other.blocks_.at(i)->get_is_rotate()) ? other.blocks_.at(i)->get_width() : other.blocks_.at(i)->get_height();
+                Block* block = new Block(other.blocks_.at(i)->get_id(), w, h);
                 blocks_[i] = block;
                 if(other.blocks_.at(i)->get_is_rotate()){
                     blocks_[i]->rotate();
                 }
+                blocks_[i]->set_x(other.blocks_.at(i)->get_x());
+                blocks_[i]->set_y(other.blocks_.at(i)->get_y());
             }
             for (int i = 1; i <= other.nBlocks_; i++) {
                 Node* node = new Node();
@@ -119,7 +123,7 @@ public:
             nBlocks_ = other.nBlocks_;
             W_ = other.W_;
             H_ = other.H_;
-            contour_line_ = other.contour_line_;
+            // contour_line_ = other.contour_line_;
         }
         return *this;
     };

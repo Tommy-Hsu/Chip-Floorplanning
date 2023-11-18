@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <cmath>
 #include <unordered_map>
 #include <limits.h>
 #include "module.h"
@@ -21,9 +22,10 @@ private:
 
     std::unordered_map<int, Block*> blocks;
     BSTree* best_bstree = nullptr;
-    BSTree* tmp_bstree = nullptr;
+    BSTree* prev_bstree = nullptr;
     BSTree* curr_bstree = nullptr;
     double best_cost_ = 0.0;
+
     int nBlocks_ = 0;
     int W_ = INT_MAX;   // width
     int H_ = INT_MAX;   // height
