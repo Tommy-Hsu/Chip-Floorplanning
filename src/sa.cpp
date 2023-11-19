@@ -67,23 +67,33 @@ void SimulationAnnealing::solve(){
             }
         }
         T *= r;
-        std::cout << "\nT: " << T << " reject: " << reject << std::endl;
+        #ifdef DEBUG_FLAG
+            std::cout << "\nT: " << T << " reject: " << reject << std::endl;
+        #endif
     }while(reject/k < 0.95 && T > 0.1 );
 
     // output the result by best_bstree
+    std::cout << " -------- Solve Done --------\n";
 }
 
 void SimulationAnnealing::output(std::ofstream& output){
 
     W_ = best_bstree->W_;
     H_ = best_bstree->H_;
-    for(int i = 1; i <= nBlocks_; i++){
-        blocks[i]->set_x(best_bstree->blocks_[i]->get_x());
-        blocks[i]->set_y(best_bstree->blocks_[i]->get_y());
-        if(best_bstree->blocks_[i]->get_is_rotate()){
-            blocks[i]->rotate();
+    for(auto const& block : best_bstree->blocks_){
+        blocks[block.first]->set_x(block.second->get_x());
+        blocks[block.first]->set_y(block.second->get_y());
+        if(block.second->get_is_rotate()){
+            blocks[block.first]->rotate();
         }
     }
+    // for(int i = 1; i <= nBlocks_; i++){
+    //     blocks[i]->set_x(best_bstree->blocks_[i]->get_x());
+    //     blocks[i]->set_y(best_bstree->blocks_[i]->get_y());
+    //     if(best_bstree->blocks_[i]->get_is_rotate()){
+    //         blocks[i]->rotate();
+    //     }
+    // }
 
     int area = W_ * H_;
     double ratio = (double)W_ / (double)H_;
@@ -94,13 +104,21 @@ void SimulationAnnealing::output(std::ofstream& output){
     //     output << "b" << i << " " << blocks[i]->get_x() << " " << blocks[i]->get_y() << std::endl;
     // }
     /* print */
-    for(int i = 1; i <= nBlocks_; i++){
-        output << "b" << i << " " << blocks[i]->get_x() << " " << blocks[i]->get_y() << " ";
-        if(blocks[i]->get_is_rotate()){
+    for(auto const& block : blocks){
+        output << "b" << block.first << " " << block.second->get_x() << " " << block.second->get_y() << " ";
+        if(block.second->get_is_rotate()){
             output << "R";
         }
         output << std::endl;
     }
+
+    // for(int i = 1; i <= nBlocks_; i++){
+    //     output << "b" << i << " " << blocks[i]->get_x() << " " << blocks[i]->get_y() << " ";
+    //     if(blocks[i]->get_is_rotate()){
+    //         output << "R";
+    //     }
+    //     output << std::endl;
+    // }
     std::cout << " -------- Output Done --------\n";
     #ifdef DEBUG_FLAG
         display_blocks();
@@ -173,7 +191,15 @@ void SimulationAnnealing::display_blocks(){
     printf("Rlowerbound: %f, Rupperbound: %f\n", Rlowerbound_, Rupperbound_);
     std::cout << "Area: " << W_ * H_ << std::endl;
     std::cout << "Ratio: " << (double)W_ / (double)H_ << std::endl;
-    for(int i = 1; i <= nBlocks_; i++){
-        printf("B%d (%d, %d) %d\n", i, blocks[i]->get_x(), blocks[i]->get_y(), blocks[i]->get_is_rotate());
+    for(auto const& block : blocks){
+        std::cout << "b" << block.first << " " << block.second->get_x() << " " << block.second->get_y() << " ";
+        if(block.second->get_is_rotate()){
+            std::cout << "R";
+        }
+        std::cout << std::endl;
     }
+
+    // for(int i = 1; i <= nBlocks_; i++){
+    //     printf("B%d (%d, %d) %d\n", i, blocks[i]->get_x(), blocks[i]->get_y(), blocks[i]->get_is_rotate());
+    // }
 }

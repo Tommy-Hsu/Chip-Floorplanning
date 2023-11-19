@@ -7,11 +7,11 @@ OBJS = main.o sa.o module.o
 
 all: release
 
-debug: CXXFLAGS += -Wall -DDEBUG_FLAG=1 -g
+debug: CXXFLAGS += -Wall -DDEBUG_FLAG -g
 debug: TARGET := $(TARGET)_debug
 debug: $(TARGET)
 
-release: CXXFLAGS += -DDEBUG_FLAG=0 $(OPTFLAGS)
+release: CXXFLAGS += $(OPTFLAGS)
 release: $(TARGET)
 
 $(TARGET): $(OBJS)

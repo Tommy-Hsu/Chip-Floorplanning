@@ -6,8 +6,8 @@ void BSTree::randomize_initial_bstree(){
 
     /* fully binary tree */
     root_ = ids[0];
-    nodes[root_]->left_ = ids[1];
-    nodes[root_]->right_ = ids[2];
+    nodes[root_]->left_ = (ids.size()>1)?ids[1]:-1;
+    nodes[root_]->right_ = (ids.size()>2)?ids[2]:-1;
 
     for(int i = 1; i < nNodes; i++){
         nodes[ids[i]]->parent_ = ids[(i-1)/2];
@@ -24,9 +24,12 @@ void BSTree::randomize_initial_bstree(){
 std::vector<int> BSTree::generate_random_ids(){
     const int nNodes = nBlocks_;
     std::vector<int> ids;
-    for(int i = 1; i <= nNodes; i++){
-        ids.push_back(i);
+    for(auto const& block : blocks_){
+        ids.push_back(block.first);
     }
+    // for(int i = 1; i <= nNodes; i++){
+    //     ids.push_back(i);
+    // }
     std::random_shuffle(ids.begin(), ids.end());
     return ids;
 }
@@ -302,8 +305,11 @@ void BSTree::display_bstree(){
 
     printf("Root: %d\n", root_);
     int nNodes = nodes.size();
-    for(int i = 1; i <= nNodes; i++){
-        printf("Node %d: left %d, right %d, parent %d\n", i, nodes[i]->left_, nodes[i]->right_, nodes[i]->parent_);
+    for(auto const& node : nodes){
+        printf("Node %d: left %d, right %d, parent %d\n", node.first, node.second->left_, node.second->right_, node.second->parent_);
     }
+    // for(int i = 1; i <= nNodes; i++){
+    //     printf("Node %d: left %d, right %d, parent %d\n", i, nodes[i]->left_, nodes[i]->right_, nodes[i]->parent_);
+    // }
     
 }
