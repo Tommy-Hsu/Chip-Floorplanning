@@ -27,10 +27,10 @@ module.o: $(SRCDIR)/module.cpp $(SRCDIR)/module.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/module.cpp
 
 run-debug:
-	./$(TARGET)_debug input.in output_debug.out
+	./$(TARGET)_debug ./Solutionchecker/sample.in output_debug.out
 
 run-release:
-	./$(TARGET) input.in output_release.out
+	./$(TARGET) ./Solutionchecker/sample.in output_release.out
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(TARGET)_debug output_debug.out output_release.out

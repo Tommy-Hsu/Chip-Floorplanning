@@ -33,11 +33,12 @@ void SimulationAnnealing::solve(){
 
     const double r = 0.95; // Cooling rate
     const int k = 40;      // Number of iterations at each temperature
-    const double T0 = 1000;//1.0e+05; //std::fabs(/ log(P));
+    // const double T0 = 1000;
 
-    double T = T0;
     double delta_cost;
     double p = 0.95; // Uphill probability
+    const double T0 = std::fabs(avg_cost_ / log(p));
+    double T = T0;
     int reject;
 
     calculate_cost(prev_bstree);
@@ -122,6 +123,24 @@ void SimulationAnnealing::normalized_cost_(BSTree* bstree, int t){
     area_norm_ /= t;
     ratio_norm_ /= t;
     std::cout << "area_norm_: " << area_norm_ << " ratio_norm_: " << ratio_norm_ << std::endl;
+
+    /* avg uphill cost */
+    int uphill_count = 0;
+    double uphill_cost = 0.0;
+    double prev_cost = calculate_cost(bstree);
+    for(int i = 0; i < t; i++){
+        bstree->perturb();
+        bstree->packing_bstree();
+        double delta_cost = calculate_cost(bstree) - prev_cost;
+        if(delta_cost > 0){
+            uphill_count++;
+            uphill_cost += delta_cost;
+        }
+        prev_cost = bstree->cost_;
+    }
+
+    avg_cost_ = uphill_cost / uphill_count;
+    std::cout << "avg_cost_: " << avg_cost_ << std::endl;
 }
 
 double SimulationAnnealing::calculate_cost(BSTree* bstree){

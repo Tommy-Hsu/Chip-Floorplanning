@@ -24,6 +24,7 @@ private:
     BSTree* best_bstree = nullptr;
     BSTree* prev_bstree = nullptr;
     BSTree* curr_bstree = nullptr;
+    double avg_cost_ = 0.0; // average cost
     double best_cost_ = 0.0;
 
     int nBlocks_ = 0;

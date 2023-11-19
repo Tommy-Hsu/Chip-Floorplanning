@@ -1,5 +1,5 @@
 make clean
-make debug
-make run-debug
-python3 printlayout.py input.in output_debug.out
-./Solutionchecker/SolutionChecker ./Solutionchecker/sample.in output_debug.out
+make release
+make run-release
+python3 printlayout.py ./Solutionchecker/sample.in output_release.out
+./Solutionchecker/Solutionchecker ./Solutionchecker/sample.in output_release.out
