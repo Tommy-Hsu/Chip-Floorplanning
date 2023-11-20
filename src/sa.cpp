@@ -12,7 +12,9 @@ void SimulationAnnealing::parse_input(std::ifstream& input){
     while (getline(input, line)) {
         std::stringstream ss(line);
         ss >> word >> b_width >> b_height;
-        b_id = static_cast<int> (std::stoi(word.substr(1)));
+        // b_id = static_cast<int> (std::stoi(word.substr(1)));
+        input_.push_back(word);
+        b_id = input_.size();
         Block* b = new Block(b_id, b_width, b_height);
         blocks[b_id] = b;   // blocks[b_id] is a pointer to Block  
         ss.clear();
@@ -70,7 +72,7 @@ void SimulationAnnealing::solve(){
         #ifdef DEBUG_FLAG
             std::cout << "\nT: " << T << " reject: " << reject << std::endl;
         #endif
-    }while(reject/k < 0.95 && T > 0.00000001 );
+    }while(reject/k < 0.95 && T > 0.0000001 );
 
     // output the result by best_bstree
     std::cout << " -------- Solve Done --------\n";
@@ -105,7 +107,8 @@ void SimulationAnnealing::output(std::ofstream& output){
     // }
     /* print */
     for(auto const& block : blocks){
-        output << "b" << block.first << " " << block.second->get_x() << " " << block.second->get_y() << " ";
+        // output << "b" << block.first << " " << block.second->get_x() << " " << block.second->get_y() << " ";
+        output << input_[block.first-1] << " " << block.second->get_x() << " " << block.second->get_y() << " ";
         if(block.second->get_is_rotate()){
             output << "R";
         }

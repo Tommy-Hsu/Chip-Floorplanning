@@ -20,6 +20,7 @@ private:
     double area_norm_ = 0.0;
     double ratio_norm_ = 0.0;
 
+    std::vector<std::string> input_;
     std::unordered_map<int, Block*> blocks;
     BSTree* best_bstree = nullptr;
     BSTree* prev_bstree = nullptr;
