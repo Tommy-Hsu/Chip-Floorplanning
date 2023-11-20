@@ -65,6 +65,7 @@ public:
 
     /* data */
     int root_ = -1;
+    std::vector<int> ids_;
     std::unordered_map<int, Block*> blocks_; // same id as Nodes
     std::unordered_map<int, Node*> nodes; // same id as Blocks
     double cost_ = 0;
@@ -80,10 +81,9 @@ public:
         for(auto const& block : blocks){
             Block* b = new Block(block.second->get_id(), block.second->get_width(), block.second->get_height());
             blocks_[block.first] = b;
-        }
-        for(auto const& block : blocks_){
             Node* node = new Node();
             nodes[block.first] = node;
+            ids_.push_back(block.first);
         }
     };
 
@@ -141,6 +141,7 @@ public:
             nBlocks_ = other.nBlocks_;
             W_ = other.W_;
             H_ = other.H_;
+            ids_ = other.ids_;
             // contour_line_ = other.contour_line_;
         }
         return *this;

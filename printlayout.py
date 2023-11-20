@@ -66,11 +66,13 @@ def plot():
         rect = patches.Rectangle((b_x, b_y), b_width, b_height, linewidth=1, edgecolor='black', facecolor='blue', alpha=0.5)
         ax.add_patch(rect)
 
-        label_0 = f'{block.b_id}\n{int(b_width)},{int(b_height)}'
-        ax.text(b_x + b_width/2, b_y + b_height/2, label_0, fontsize=12, ha='center', va='center', color='white')
-        label_1 = f'({int(b_x)},{int(b_y)})'
-        ax.text(b_x , b_y, label_1, fontsize=12, ha='left', va='bottom')
-        ax.scatter(b_x, b_y, marker='*', color='red', s=100, label='Left Bottom')
+        # label_0 = f'{block.b_id}'
+        # ax.text(b_x + b_width/2, b_y + b_height/2, label_0, fontsize=12, ha='center', va='center', color='white')
+        # label_0 = f'{block.b_id}\n{int(b_width)},{int(b_height)}'
+        # ax.text(b_x + b_width/2, b_y + b_height/2, label_0, fontsize=12, ha='center', va='center', color='white')
+        # label_1 = f'({int(b_x)},{int(b_y)})'
+        # ax.text(b_x , b_y, label_1, fontsize=12, ha='left', va='bottom')
+        # ax.scatter(b_x, b_y, marker='*', color='red', s=100, label='Left Bottom')
 
     fig.savefig(os.path.join(os.path.dirname(__file__), 'figures', 'plot.png'))
 

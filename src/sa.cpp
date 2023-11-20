@@ -14,7 +14,7 @@ void SimulationAnnealing::parse_input(std::ifstream& input){
         ss >> word >> b_width >> b_height;
         b_id = static_cast<int> (std::stoi(word.substr(1)));
         Block* b = new Block(b_id, b_width, b_height);
-        blocks[b_id] = b;   // blocks[b_id] is a pointer to Block   
+        blocks[b_id] = b;   // blocks[b_id] is a pointer to Block  
         ss.clear();
     }
     nBlocks_ = blocks.size();
@@ -29,15 +29,15 @@ void SimulationAnnealing::solve(){
     curr_bstree = new BSTree(nBlocks_, blocks);
 
     prev_bstree->randomize_initial_bstree();
-    normalized_cost_(prev_bstree, 1000);
+    normalized_cost_(prev_bstree, 100000);
 
     const double r = 0.95; // Cooling rate
-    const int k = 40;      // Number of iterations at each temperature
-    // const double T0 = 1000;
+    const int k = 100;      // Number of iterations at each temperature
 
     double delta_cost;
     double p = 0.95; // Uphill probability
     const double T0 = std::fabs(avg_cost_ / log(p));
+    // const double T0 = 1000000000;
     double T = T0;
     int reject;
 
@@ -70,7 +70,7 @@ void SimulationAnnealing::solve(){
         #ifdef DEBUG_FLAG
             std::cout << "\nT: " << T << " reject: " << reject << std::endl;
         #endif
-    }while(reject/k < 0.95 && T > 0.1 );
+    }while(reject/k < 0.95 && T > 0.00000001 );
 
     // output the result by best_bstree
     std::cout << " -------- Solve Done --------\n";

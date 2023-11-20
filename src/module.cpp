@@ -61,7 +61,7 @@ void BSTree::packing_bstree(){
 }
 
 void BSTree::dfs_preorder(int node_id){
-    if(node_id > 0){
+    if(node_id > -1){
         const auto& curr_block_ptr = blocks_[node_id];
         int parent_id = nodes[node_id]->parent_;
 
@@ -269,29 +269,29 @@ void BSTree::insert_node(int nn, int nnp){
 void BSTree::perturb(){
     int m, n, t;
     m = rand()%3 + 1;
-    n = rand()%nBlocks_ + 1;
+    n = rand()%nBlocks_;
 
     // std::cout << "m: " << m << " n: " << n << std::endl;
 
     if( m == 1 ){
         /* rotate */
-        blocks_[n]->rotate();
+        blocks_[ids_[n]]->rotate();
     }
     else if( m == 2 ){
        /* delete & insert */
         do{
-            t = rand()%nBlocks_ + 1;
+            t = rand()%nBlocks_;
         }while(t == n);
-        delete_node(n);
-        insert_node(n, t);
+        delete_node(ids_[n]);
+        insert_node(ids_[n], ids_[t]);
     }
     else if( m == 3 ){
         /* swap 2 nodes */
         do{
-            t = rand()%nBlocks_ + 1;
+            t = rand()%nBlocks_;
             // std::cout << "t: " << t << std::endl;
         }while(t == n);
-        swap_nodes(n, t);
+        swap_nodes(ids_[n], ids_[t]);
     }
 
     // std::cout << " -------- BSTree Perturb Done --------\n";
